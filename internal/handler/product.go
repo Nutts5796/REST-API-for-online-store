@@ -3,6 +3,7 @@ package handler
 import (
 	"context"
 
+	"github.com/Nutts5796/REST-API-for-online-store/model"
 	"github.com/gofiber/fiber/v2"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
@@ -12,6 +13,7 @@ func GetProducts(c *fiber.Ctx, db *pgxpool.Pool) error {
 	if err != nil {
 		return c.Status(500).JSON(fiber.Map{"error": "Could not fetch products"})
 	}
+	defer rows.Close()
 
 	products := []map[string]interface{}{}
 	for rows.Next() {
@@ -19,7 +21,9 @@ func GetProducts(c *fiber.Ctx, db *pgxpool.Pool) error {
 		var name, description string
 		var price float64
 
-		rows.Scan(&id, &name, &description, &price)
+		if err := rows.Scan(&id, &name, &description, &price); err != nil {
+			return c.Status(500).JSON(fiber.Map{"error": "Failed to scan product data"})
+		}
 
 		product := map[string]interface{}{
 			"id":          id,
@@ -43,10 +47,9 @@ func GetUsers(c *fiber.Ctx, db *pgxpool.Pool) error {
 	}
 	defer rows.Close()
 
-	User := 0
-	var users []User
+	var users []model.User
 	for rows.Next() {
-		var user User
+		var user model.User
 		if err := rows.Scan(&user.ID, &user.Username, &user.Email); err != nil {
 			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 				"error": "Ошибка при сканировании данных",

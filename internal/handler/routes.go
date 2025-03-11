@@ -7,6 +7,10 @@ import (
 
 func RegisterRoutes(app *fiber.App, db *pgxpool.Pool) {
 
+	app.Get("/api/users", func(c *fiber.Ctx) error {
+		return GetUsers(c, db)
+	})
+
 	app.Post("/register", func(c *fiber.Ctx) error {
 		return Register(c, db)
 	})

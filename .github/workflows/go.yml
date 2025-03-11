@@ -1,0 +1,60 @@
+name: Go CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Клонируем репозиторий
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # 2. Устанавливаем Go
+      - name: Setup Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: 1.21
+
+      # 3. Кэшируем зависимости (ускоряет процесс)
+      - name: Cache Go modules
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/go/pkg/mod
+            ~/.cache/go-build
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
+
+      # 4. Устанавливаем зависимости (если есть)
+      - name: Download dependencies
+        run: go mod download
+
+      # 5. Запускаем билд проекта
+      - name: Build
+        run: go build ./...
+
+      # 6. Запускаем тесты с покрытием
+      - name: Run tests with coverage
+        run: go test ./... -v -coverprofile=coverage.out
+
+      # 7. (Опционально) Публикуем отчет о покрытии (например, в Codecov)
+      # - name: Upload coverage to Codecov
+      #   uses: codecov/codecov-action@v3
+      #   with:
+      #     files: coverage.out
+      #     flags: unittests
+
+      # 8. Линтер (если используешь golangci-lint)
+      - name: Install golangci-lint
+        run: |
+          curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.54.2
+
+      - name: Run golangci-lint
+        run: golangci-lint run ./...

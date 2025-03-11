@@ -12,7 +12,7 @@ import (
 func main() {
 	app := fiber.New()
 
-	db, err := pgxpool.New(context.Background(), "postgres://user:password@localhost:5432/dbname")
+	db, err := pgxpool.New(context.Background(), "postgres://postgres:password@db:5432/REST-API-for-online-store")
 	if err != nil {
 		log.Fatalf("Ошибка при подключении к базе данных: %v", err)
 	}

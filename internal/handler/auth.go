@@ -19,13 +19,11 @@ func Register(c *fiber.Ctx, db *pgxpool.Pool) error {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid input"})
 	}
 
-	// Хешируем пароль
 	hash, err := bcrypt.GenerateFromPassword([]byte(req.Password), bcrypt.DefaultCost)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Could not hash password"})
 	}
 
-	// Сохраняем пользователя в базу данных
 	_, err = db.Exec(c.Context(), "INSERT INTO users (username, email, password_hash) VALUES ($1, $2, $3)", req.Username, req.Email, string(hash))
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Could not register user"})
@@ -75,13 +73,11 @@ func Login(c *fiber.Ctx, db *pgxpool.Pool) error {
 
 // Logout обрабатывает выход пользователя.
 func Logout(c *fiber.Ctx) error {
-	// Здесь можно добавить логику для инвалидации токена (если используется JWT)
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{"message": "Logged out successfully"})
 }
 
 // RefreshToken обновляет токен пользователя.
 func RefreshToken(c *fiber.Ctx) error {
-	// Здесь можно добавить логику для обновления токена (если используется JWT)
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{"message": "Token refreshed successfully"})
 }
 

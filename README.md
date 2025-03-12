@@ -33,18 +33,6 @@ Register by sending a POST /register request.
 Login and receive a JWT token via POST /login.
 Make requests to public or protected endpoints.
 
-# 🔧 Possible Improvements (Roadmap)
-
-✅ Implement full JWT authentication with refresh tokens.
-✅ Add user roles (admin, user).
-✅ Add CRUD endpoints for managing products:
-
-POST /products — add a product.
-PUT /products/:id — update a product.
-DELETE /products/:id — delete a product.
-✅ Integrate with Swagger for automatic API documentation generation.
-✅ Add integration tests using testcontainers-go.
-
 # 🎯 Summary: Why This Application?
 
 This is a minimalist yet thoughtfully designed backend for an online store, featuring a simple architecture and basic functionality:
